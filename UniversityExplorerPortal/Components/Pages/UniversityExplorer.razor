@@ -1,0 +1,224 @@
+@page "/university-explorer"
+@inject CountryService CountryService
+@inject UniversityService UniversityService
+
+<PageTitle>University Explorer</PageTitle>
+
+<h1 class="mb-4">University Explorer</h1>
+
+@* ---------- Step 1: load all countries ---------- *@
+@if (isLoadingCountries)
+{
+    <div class="d-flex align-items-center">
+        <div class="spinner-border text-primary me-3" role="status"></div>
+        <p class="mb-0">Loading countries...</p>
+    </div>
+}
+else if (hasCountryError)
+{
+    <div class="alert alert-danger">
+        Unable to retrieve data. The Countries API could not be reached.
+        <button type="button" class="btn btn-sm btn-outline-danger ms-2" @onclick="LoadCountriesAsync">Try again</button>
+    </div>
+}
+else
+{
+    @* ---------- Step 2: the user selects a country ---------- *@
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-5">
+            <CountrySelector Countries="countries"
+                             SelectedCountryName="selectedCountryName"
+                             OnCountrySelected="HandleCountrySelected" />
+        </div>
+    </div>
+
+    @if (selectedCountry == null)
+    {
+        <div class="alert alert-info">Choose a country above to see its details and universities.</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @* ---------- Left column: country details + university details ---------- *@
+            <div class="col-lg-4">
+                <CountryDetails Country="selectedCountry" />
+
+                @if (selectedUniversity != null)
+                {
+                    <div class="mt-4">
+                        <UniversityDetails University="selectedUniversity" OnClose="HandleUniversityClosed" />
+                    </div>
+                }
+            </div>
+
+            @* ---------- Right column: universities list ---------- *@
+            <div class="col-lg-8">
+                <h2 class="h4">Universities in @selectedCountry.Name</h2>
+
+                @if (isLoadingUniversities)
+                {
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="spinner-border text-primary me-3" role="status"></div>
+                        <p class="mb-0">Loading universities...</p>
+                    </div>
+                }
+                else if (hasUniversityError)
+                {
+                    <div class="alert alert-danger mt-3">
+                        Unable to retrieve data. The Universities API could not be reached.
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" @onclick="() => HandleCountrySelected(selectedCountry.Name)">Try again</button>
+                    </div>
+                }
+                else if (universities.Count == 0)
+                {
+                    <div class="alert alert-warning mt-3">
+                        No universities were found for @selectedCountry.Name.
+                        (The Universities API may use a different spelling for this country.)
+                    </div>
+                }
+                else
+                {
+                    @* ---------- Search box: filters while typing ---------- *@
+                    <input class="form-control mb-3"
+                           @bind="SearchText"
+                           @bind:event="oninput"
+                           placeholder="Search university..." />
+
+                    var matches = FilteredUniversities.ToList();
+
+                    <p class="text-muted">
+                        Showing @Math.Min(matches.Count, MaxUniversitiesShown) of @matches.Count
+                        @(string.IsNullOrWhiteSpace(SearchText) ? "universities" : "matching universities").
+                        @if (matches.Count > MaxUniversitiesShown)
+                        {
+                            <span>Type in the search box to narrow the list.</span>
+                        }
+                    </p>
+
+                    @if (matches.Count == 0)
+                    {
+                        <div class="alert alert-warning">No universities match "@SearchText".</div>
+                    }
+                    else
+                    {
+                        <div class="row g-3">
+                            @foreach (var university in matches.Take(MaxUniversitiesShown))
+                            {
+                                <div class="col-md-6">
+                                    <UniversityCard University="university"
+                                                    IsSelected="@(university == selectedUniversity)"
+                                                    OnSelect="HandleUniversitySelected" />
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+}
+
+@code {
+    // Showing thousands of cards at once would be slow, so we only draw the first 50.
+    private const int MaxUniversitiesShown = 50;
+
+    private List<Country> countries = new();
+    private List<University> universities = new();
+
+    private Country? selectedCountry;
+    private University? selectedUniversity;
+    private string selectedCountryName = string.Empty;
+
+    // Bound to the search box
+    private string SearchText = string.Empty;
+
+    private bool isLoadingCountries = true;
+    private bool isLoadingUniversities = false;
+    private bool hasCountryError = false;
+    private bool hasUniversityError = false;
+
+    // Universities whose name contains the search text (not case-sensitive)
+    private IEnumerable<University> FilteredUniversities =>
+        string.IsNullOrWhiteSpace(SearchText)
+            ? universities
+            : universities.Where(u => u.Name.Contains(SearchText.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    // Runs when the page opens
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCountriesAsync();
+    }
+
+    private async Task LoadCountriesAsync()
+    {
+        isLoadingCountries = true;
+        hasCountryError = false;
+
+        try
+        {
+            countries = await CountryService.GetCountriesAsync();
+        }
+        catch (Exception)
+        {
+            hasCountryError = true;
+        }
+        finally
+        {
+            isLoadingCountries = false;
+        }
+    }
+
+    // Runs when the user picks a country in the dropdown
+    private async Task HandleCountrySelected(string countryName)
+    {
+        // Reset everything that belongs to the previous country
+        selectedCountryName = countryName;
+        selectedCountry = countries.FirstOrDefault(c => c.Name == countryName);
+        selectedUniversity = null;
+        universities = new List<University>();
+        SearchText = string.Empty;
+        hasUniversityError = false;
+
+        if (selectedCountry == null)
+        {
+            return; // "-- Select a country --" was chosen
+        }
+
+        isLoadingUniversities = true;
+
+        try
+        {
+            var result = await UniversityService.GetUniversitiesAsync(countryName);
+
+            // If the user picked another country while we were waiting, ignore this old result.
+            if (selectedCountryName == countryName)
+            {
+                universities = result;
+            }
+        }
+        catch (Exception)
+        {
+            if (selectedCountryName == countryName)
+            {
+                hasUniversityError = true;
+            }
+        }
+        finally
+        {
+            if (selectedCountryName == countryName)
+            {
+                isLoadingUniversities = false;
+            }
+        }
+    }
+
+    private void HandleUniversitySelected(University university)
+    {
+        selectedUniversity = university;
+    }
+
+    private void HandleUniversityClosed()
+    {
+        selectedUniversity = null;
+    }
+}

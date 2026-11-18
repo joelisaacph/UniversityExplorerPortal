@@ -1,0 +1,29 @@
+@* Dropdown that lists all countries.
+   When the user picks one, it tells the parent page using the OnCountrySelected EventCallback. *@
+
+<label for="countrySelect" class="form-label fw-semibold">Select Country</label>
+<select id="countrySelect" class="form-select" value="@SelectedCountryName" @onchange="HandleChange">
+    <option value="">-- Select a country --</option>
+    @foreach (var country in Countries)
+    {
+        <option value="@country.Name">@country.Name</option>
+    }
+</select>
+
+@code {
+    [Parameter]
+    public List<Country> Countries { get; set; } = new();
+
+    [Parameter]
+    public string SelectedCountryName { get; set; } = string.Empty;
+
+    // Event sent to the parent page: "the user chose this country"
+    [Parameter]
+    public EventCallback<string> OnCountrySelected { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        var countryName = e.Value?.ToString() ?? string.Empty;
+        await OnCountrySelected.InvokeAsync(countryName);
+    }
+}

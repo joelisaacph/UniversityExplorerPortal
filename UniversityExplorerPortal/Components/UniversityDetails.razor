@@ -1,0 +1,63 @@
+@* Shows the full details of the selected university. *@
+
+@if (University != null)
+{
+    <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">University Details</span>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close" @onclick="HandleClose"></button>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@University.Name</h5>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Country</dt>
+                <dd class="col-sm-8">@University.Country</dd>
+
+                <dt class="col-sm-4">Website</dt>
+                <dd class="col-sm-8">
+                    @if (University.WebPages.Count == 0)
+                    {
+                        <span>Not available</span>
+                    }
+                    @foreach (var webPage in University.WebPages)
+                    {
+                        <div><a href="@webPage" target="_blank" rel="noopener noreferrer">@webPage</a></div>
+                    }
+                </dd>
+
+                <dt class="col-sm-4">Domain</dt>
+                <dd class="col-sm-8">
+                    @if (University.Domains.Count == 0)
+                    {
+                        <span>Not available</span>
+                    }
+                    else
+                    {
+                        @string.Join(", ", University.Domains)
+                    }
+                </dd>
+
+                @if (!string.IsNullOrWhiteSpace(University.StateProvince))
+                {
+                    <dt class="col-sm-4">State / Province</dt>
+                    <dd class="col-sm-8">@University.StateProvince</dd>
+                }
+            </dl>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public University? University { get; set; }
+
+    // Event sent to the parent page: "the user closed the details panel"
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private async Task HandleClose()
+    {
+        await OnClose.InvokeAsync();
+    }
+}

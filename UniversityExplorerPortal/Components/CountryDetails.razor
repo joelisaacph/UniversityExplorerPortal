@@ -1,0 +1,33 @@
+@* Card that shows the details of the selected country. *@
+
+@if (Country != null)
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-white fw-semibold">Country Details</div>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(Country.Flags?.Png))
+            {
+                <img src="@Country.Flags.Png" alt="Flag of @Country.Name" class="country-flag mb-3" />
+            }
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Country</dt>
+                <dd class="col-sm-8">@Country.Name</dd>
+
+                <dt class="col-sm-4">Capital</dt>
+                <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Country.Capital) ? "N/A" : Country.Capital)</dd>
+
+                <dt class="col-sm-4">Region</dt>
+                <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Country.Region) ? "N/A" : Country.Region)</dd>
+
+                <dt class="col-sm-4">Population</dt>
+                <dd class="col-sm-8">@Country.Population.ToString("N0")</dd>
+            </dl>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Country? Country { get; set; }
+}

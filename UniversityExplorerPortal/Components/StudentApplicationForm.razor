@@ -1,0 +1,87 @@
+@* The form used by BOTH the Create page and the Edit page.
+   The parent page gives us the application to edit, the button text and an OnSubmit callback.
+   The form only sends OnSubmit when every validation rule passes. *@
+
+<EditForm Model="Application" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="studentName" class="form-label">Student Name</label>
+            <InputText id="studentName" class="form-control" @bind-Value="Application.StudentName" />
+            <ValidationMessage For="() => Application.StudentName" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="email" class="form-label">Email Address</label>
+            <InputText id="email" class="form-control" @bind-Value="Application.Email" />
+            <ValidationMessage For="() => Application.Email" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="country" class="form-label">Country</label>
+            <InputText id="country" class="form-control" @bind-Value="Application.Country" />
+            <ValidationMessage For="() => Application.Country" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="university" class="form-label">University Name</label>
+            <InputText id="university" class="form-control" @bind-Value="Application.University" />
+            <ValidationMessage For="() => Application.University" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="course" class="form-label">Course Name</label>
+            <InputText id="course" class="form-control" @bind-Value="Application.Course" />
+            <ValidationMessage For="() => Application.Course" />
+        </div>
+
+        <div class="col-md-6">
+            <label for="applicationDate" class="form-label">Application Date</label>
+            <InputDate id="applicationDate" class="form-control" @bind-Value="Application.ApplicationDate" />
+            <ValidationMessage For="() => Application.ApplicationDate" />
+        </div>
+
+        <div class="col-12">
+            <label for="personalStatement" class="form-label">Personal Statement</label>
+            <InputTextArea id="personalStatement" class="form-control" rows="4" @bind-Value="Application.PersonalStatement" />
+            <ValidationMessage For="() => Application.PersonalStatement" />
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary" disabled="@IsSaving">
+            @if (IsSaving)
+            {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                <span>Saving...</span>
+            }
+            else
+            {
+                <span>@SubmitButtonText</span>
+            }
+        </button>
+        <a href="student-applications" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public StudentApplication Application { get; set; } = new();
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Submit";
+
+    // True while the parent page is talking to the API (disables the button)
+    [Parameter]
+    public bool IsSaving { get; set; }
+
+    // Event sent to the parent page: "the form is valid, please save this application"
+    [Parameter]
+    public EventCallback<StudentApplication> OnSubmit { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        await OnSubmit.InvokeAsync(Application);
+    }
+}

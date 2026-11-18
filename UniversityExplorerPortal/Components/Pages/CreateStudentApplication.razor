@@ -1,0 +1,62 @@
+@page "/student-applications/create"
+@inject StudentApplicationService ApplicationService
+
+<PageTitle>Create Student Application</PageTitle>
+
+<h1 class="mb-4">Create Student Application</h1>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">
+        ✅ @successMessage
+        <a href="student-applications" class="alert-link ms-2">View all applications</a>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <StudentApplicationForm Application="newApplication"
+                                SubmitButtonText="Submit Application"
+                                IsSaving="isSaving"
+                                OnSubmit="HandleSubmit" />
+    </div>
+</div>
+
+@code {
+    private StudentApplication newApplication = NewEmptyApplication();
+    private bool isSaving = false;
+    private string? successMessage;
+    private string? errorMessage;
+
+    // A blank application. The date starts as today.
+    private static StudentApplication NewEmptyApplication() => new() { ApplicationDate = DateTime.Today };
+
+    // Runs when the form is valid and the user presses "Submit Application"
+    private async Task HandleSubmit(StudentApplication application)
+    {
+        isSaving = true;
+        successMessage = null;
+        errorMessage = null;
+
+        try
+        {
+            await ApplicationService.CreateApplicationAsync(application);
+
+            successMessage = $"The application for {application.StudentName} was submitted successfully.";
+            newApplication = NewEmptyApplication(); // clear the form for the next application
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unable to submit the application. {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

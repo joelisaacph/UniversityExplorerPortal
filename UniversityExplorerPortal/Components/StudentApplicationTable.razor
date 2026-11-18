@@ -1,0 +1,48 @@
+@* Table that lists student applications.
+   Each row has an Edit button which tells the parent page which application was chosen (OnEdit). *@
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle bg-white shadow-sm">
+        <thead class="table-primary">
+            <tr>
+                <th>Id</th>
+                <th>Student Name</th>
+                <th>University Name</th>
+                <th>Country</th>
+                <th>Course Name</th>
+                <th>Application Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var application in Applications)
+            {
+                <tr>
+                    <td>@application.Id</td>
+                    <td>@application.StudentName</td>
+                    <td>@application.University</td>
+                    <td>@application.Country</td>
+                    <td>@application.Course</td>
+                    <td>@(application.ApplicationDate?.ToString("dd MMM yyyy") ?? "-")</td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-primary" @onclick="() => HandleEdit(application)">Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<StudentApplication> Applications { get; set; } = new();
+
+    // Event sent to the parent page: "the user wants to edit this application"
+    [Parameter]
+    public EventCallback<StudentApplication> OnEdit { get; set; }
+
+    private async Task HandleEdit(StudentApplication application)
+    {
+        await OnEdit.InvokeAsync(application);
+    }
+}

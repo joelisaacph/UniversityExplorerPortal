@@ -1,0 +1,319 @@
+@page "/"
+
+<PageTitle>Home - University Explorer Portal</PageTitle>
+
+<div class="home-hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <p class="hero-eyebrow">UNIVERSITY EXPLORER PORTAL</p>
+
+        <h1>Discover Your<br />Future University</h1>
+
+        <p class="hero-description">
+            Explore universities around the world, discover new opportunities
+            and take the first step towards your academic future.
+        </p>
+
+        <a href="/university-explorer" class="hero-link">
+            <span class="hero-arrow">→</span>
+            Explore universities
+        </a>
+    </div>
+
+    <div class="hero-bottom">
+        <span>EXPLORE THE WORLD OF EDUCATION</span>
+        <span>01 — DISCOVER</span>
+    </div>
+</div>
+
+<section class="home-intro">
+    <div class="intro-heading">
+        <p class="section-label">YOUR ACADEMIC JOURNEY</p>
+        <h2>Everything starts<br />with a discovery.</h2>
+    </div>
+
+    <div class="intro-description">
+        <p>
+            Find universities across the globe, discover the countries
+            behind them and manage your applications in one place.
+        </p>
+    </div>
+</section>
+
+<section class="home-features">
+
+    <a href="/university-explorer" class="feature-item">
+        <span class="feature-number">01</span>
+        <div>
+            <h3>Explore Universities</h3>
+            <p>Discover universities and academic opportunities around the world.</p>
+        </div>
+        <span class="feature-arrow">↗</span>
+    </a>
+
+    <a href="/student-applications" class="feature-item">
+        <span class="feature-number">02</span>
+        <div>
+            <h3>Student Applications</h3>
+            <p>Keep track of your university applications and their details.</p>
+        </div>
+        <span class="feature-arrow">↗</span>
+    </a>
+
+    <a href="/student-applications/create" class="feature-item">
+        <span class="feature-number">03</span>
+        <div>
+            <h3>Start Your Application</h3>
+            <p>Take the next step and submit your university application.</p>
+        </div>
+        <span class="feature-arrow">↗</span>
+    </a>
+
+</section>
+
+<footer class="home-footer">
+    <span>UNIVERSITY EXPLORER PORTAL</span>
+    <span>Discover. Learn. Apply.</span>
+</footer>
+
+<style>
+    .home-hero {
+        min-height: 720px;
+        height: calc(100vh - 65px);
+        max-height: 950px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        overflow: hidden;
+        background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2200&q=85');
+        background-size: cover;
+        background-position: center;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(12, 18, 19, 0.48),
+            rgba(12, 18, 19, 0.62)
+        );
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+        padding: 40px 24px;
+        animation: heroFade 1.2s ease;
+    }
+
+    .hero-eyebrow,
+    .section-label {
+        font-size: 11px;
+        letter-spacing: 4px;
+        font-weight: 600;
+    }
+
+    .hero-eyebrow {
+        color: #e0d4bf;
+        margin-bottom: 28px;
+    }
+
+    .hero-content h1 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: clamp(52px, 7vw, 94px);
+        font-weight: 400;
+        line-height: 1.05;
+        margin-bottom: 28px;
+    }
+
+    .hero-description {
+        max-width: 650px;
+        margin: 0 auto 38px;
+        font-size: 17px;
+        line-height: 1.8;
+        color: rgba(255,255,255,0.88);
+    }
+
+    .hero-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: gap 0.3s ease;
+    }
+
+    .hero-link:hover {
+        color: white;
+        gap: 24px;
+    }
+
+    .hero-arrow {
+        width: 43px;
+        height: 43px;
+        border-radius: 50%;
+        background: white;
+        color: #172b35;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 23px;
+    }
+
+    .hero-bottom {
+        position: absolute;
+        z-index: 2;
+        bottom: 28px;
+        left: 5%;
+        right: 5%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: rgba(255,255,255,0.75);
+    }
+
+    .home-intro {
+        background: #f7f6f2;
+        padding: 110px 9%;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 60px;
+    }
+
+    .section-label {
+        color: #8b917f;
+        margin-bottom: 24px;
+    }
+
+    .intro-heading h2 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: clamp(40px, 5vw, 62px);
+        font-weight: 400;
+        line-height: 1.15;
+        color: #172b35;
+    }
+
+    .intro-description {
+        max-width: 390px;
+        color: #68716c;
+        font-size: 16px;
+        line-height: 1.9;
+        padding-bottom: 8px;
+    }
+
+    .home-features {
+        background: #f7f6f2;
+        padding: 0 9% 100px;
+    }
+
+    .feature-item {
+        display: grid;
+        grid-template-columns: 80px 1fr 40px;
+        align-items: center;
+        gap: 20px;
+        padding: 32px 0;
+        border-top: 1px solid #deded5;
+        color: #172b35;
+        text-decoration: none;
+        transition: padding 0.3s ease;
+    }
+
+    .feature-item:last-child {
+        border-bottom: 1px solid #deded5;
+    }
+
+    .feature-item:hover {
+        padding-left: 12px;
+        color: #657663;
+    }
+
+    .feature-number {
+        font-size: 12px;
+        color: #999b8f;
+        letter-spacing: 2px;
+    }
+
+    .feature-item h3 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 27px;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    .feature-item p {
+        color: #777e78;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .feature-arrow {
+        font-size: 24px;
+    }
+
+    .home-footer {
+        background: #172b35;
+        color: #e8e5dc;
+        padding: 28px 9%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        letter-spacing: 2px;
+    }
+
+    @@keyframes heroFade {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .home-hero {
+            min-height: 650px;
+            height: 85vh;
+        }
+
+        .home-intro {
+            padding: 70px 7%;
+            flex-direction: column;
+            align-items: start;
+            gap: 25px;
+        }
+
+        .home-features {
+            padding: 0 7% 70px;
+        }
+
+        .feature-item {
+            grid-template-columns: 35px 1fr 25px;
+            gap: 10px;
+        }
+
+        .feature-item h3 {
+            font-size: 22px;
+        }
+
+        .hero-bottom {
+            font-size: 8px;
+        }
+
+        .home-footer {
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+</style>

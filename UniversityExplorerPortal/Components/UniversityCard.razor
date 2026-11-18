@@ -1,0 +1,41 @@
+@* Small card with the summary of one university.
+   The "View Details" button tells the parent page which university was chosen (OnSelect). *@
+
+<div class="card h-100 shadow-sm university-card @(IsSelected ? "selected" : "")">
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">@University.Name</h5>
+        <p class="card-text mb-1"><strong>Country:</strong> @University.Country</p>
+        <p class="card-text">
+            <strong>Website:</strong>
+            @if (University.WebPages.Count > 0)
+            {
+                <a class="website-link ms-1" href="@University.Website" target="_blank" rel="noopener noreferrer">@University.Website</a>
+            }
+            else
+            {
+                <span class="ms-1">Not available</span>
+            }
+        </p>
+        <button type="button" class="btn btn-outline-primary btn-sm mt-auto align-self-start" @onclick="HandleSelect">
+            View Details
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public University University { get; set; } = new();
+
+    // True when this university is the one currently selected (used for the blue border)
+    [Parameter]
+    public bool IsSelected { get; set; }
+
+    // Event sent to the parent page: "the user selected this university"
+    [Parameter]
+    public EventCallback<University> OnSelect { get; set; }
+
+    private async Task HandleSelect()
+    {
+        await OnSelect.InvokeAsync(University);
+    }
+}

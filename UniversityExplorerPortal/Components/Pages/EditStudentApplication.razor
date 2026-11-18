@@ -1,0 +1,101 @@
+@page "/student-applications/edit/{Id:int}"
+@inject StudentApplicationService ApplicationService
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Application</PageTitle>
+
+<h1 class="mb-4">Edit Application</h1>
+
+@if (isLoading)
+{
+    <div class="d-flex align-items-center">
+        <div class="spinner-border text-primary me-3" role="status"></div>
+        <p class="mb-0">Loading...</p>
+    </div>
+}
+else if (hasError)
+{
+    <div class="alert alert-danger">
+        Unable to retrieve data. The Student Application API could not be reached.
+        <a href="student-applications" class="alert-link ms-2">Back to applications</a>
+    </div>
+}
+else if (application == null)
+{
+    <div class="alert alert-warning">
+        Application number @Id was not found.
+        <a href="student-applications" class="alert-link ms-2">Back to applications</a>
+    </div>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="text-muted">Editing application number <strong>@application.Id</strong></p>
+            <StudentApplicationForm Application="application"
+                                    SubmitButtonText="Save Changes"
+                                    IsSaving="isSaving"
+                                    OnSubmit="HandleSubmit" />
+        </div>
+    </div>
+}
+
+@code {
+    // The {Id:int} part of the route (/student-applications/edit/5) arrives here
+    [Parameter]
+    public int Id { get; set; }
+
+    private StudentApplication? application;
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private bool hasError = false;
+    private string? errorMessage;
+
+    // Runs when the page opens: load the existing application
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            application = await ApplicationService.GetApplicationAsync(Id);
+
+            // Older records may not have a date yet, so start the date picker at today.
+            if (application != null && application.ApplicationDate == null)
+            {
+                application.ApplicationDate = DateTime.Today;
+            }
+        }
+        catch (Exception)
+        {
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Runs when the form is valid and the user presses "Save Changes"
+    private async Task HandleSubmit(StudentApplication updatedApplication)
+    {
+        isSaving = true;
+        errorMessage = null;
+
+        try
+        {
+            await ApplicationService.UpdateApplicationAsync(updatedApplication);
+
+            // Success: go back to the Applications page
+            Navigation.NavigateTo("/student-applications");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unable to update the application. {ex.Message}";
+            isSaving = false;
+        }
+    }
+}

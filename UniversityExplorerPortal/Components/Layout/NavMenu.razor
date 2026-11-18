@@ -1,0 +1,154 @@
+
+<nav class="navbar navbar-expand-lg portal-navbar">
+    <div class="container-fluid px-4 px-lg-5">
+
+        <a class="navbar-brand portal-brand" href="/">
+            <span class="brand-icon">U.</span>
+            <span>
+                UNIVERSITY EXPLORER<br />
+                <small>PORTAL</small>
+            </span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                aria-label="Toggle navigation"
+                @onclick="ToggleMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="@MenuCssClass navbar-collapse" @onclick="CloseMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/"
+                             Match="NavLinkMatch.All">
+                        Home
+                    </NavLink>
+                </li>
+
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/university-explorer">
+                        Explore Universities
+                    </NavLink>
+                </li>
+
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/student-applications">
+                        Applications
+                    </NavLink>
+                </li>
+
+                <li class="nav-item">
+                    <NavLink class="nav-link apply-link"
+                             href="/student-applications/create">
+                        Apply Now →
+                    </NavLink>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .portal-navbar {
+        position: relative;
+        z-index: 100;
+        width: 100%;
+        min-height: 78px;
+        padding: 12px 0;
+        background: #172b35;
+        transition: background 0.3s ease;
+    }
+
+    /* Transparent navigation on the homepage */
+    body:has(.home-hero) .portal-navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(15, 20, 22, 0.25);
+        backdrop-filter: blur(5px);
+    }
+
+    .portal-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white !important;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        line-height: 1.4;
+    }
+
+        .portal-brand small {
+            font-size: 9px;
+            letter-spacing: 4px;
+            font-weight: 400;
+            color: #d8c7af;
+        }
+
+    .brand-icon {
+        font-family: Georgia, serif;
+        font-size: 30px;
+        color: #d8c7af;
+        border: 1px solid rgba(255,255,255,0.5);
+        padding: 4px 8px;
+    }
+
+    .portal-navbar .nav-link {
+        color: rgba(255,255,255,0.85) !important;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        padding: 12px 16px !important;
+        transition: color 0.3s ease;
+    }
+
+        .portal-navbar .nav-link:hover,
+        .portal-navbar .nav-link.active {
+            color: #d8c7af !important;
+        }
+
+    .portal-navbar .apply-link {
+        border: 1px solid rgba(255,255,255,0.6);
+        margin-left: 12px;
+        padding: 10px 20px !important;
+    }
+
+        .portal-navbar .apply-link:hover {
+            background: white;
+            color: #172b35 !important;
+        }
+
+    .portal-navbar .navbar-toggler {
+        border-color: rgba(255,255,255,0.5);
+    }
+
+    .portal-navbar .navbar-toggler-icon {
+		filter: brightness(0) invert(1);
+
+    @@media (max-width: 991px) 
+        .portal-navbar .navbar-collapse {
+            background: #172b35;
+            padding: 15px;
+            margin-top: 12px;
+        }
+
+        .portal-navbar .apply-link {
+            margin-left: 0;
+            display: inline-block;
+            margin-top: 8px;
+        }
+    }
+</style>
+
+@code {
+    private bool menuOpen = false;
+
+    private string MenuCssClass =>
+        menuOpen ? "collapse show" : "collapse";
+
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    private void CloseMenu() => menuOpen = false;
+}
